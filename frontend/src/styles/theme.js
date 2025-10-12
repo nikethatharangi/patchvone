@@ -6,7 +6,7 @@ const theme = createTheme({
     mode: "light", // or "dark"
     primary: {
       main: "#FFFCF5", // dark gray / your main brand color
-      contrastText: " #111B1E", // text color on primary background
+      contrastText: "#111B1E", // text color on primary background
     },
     secondary: {
       main: "#f59e0b", // golden yellow / accent color

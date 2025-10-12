@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import Header from "../../../components/Header/Header";
-import Banner from "../../../components/Banner/Banner";
-import ProductCard from "../../../components/ProductCard/ProductCard";
-import Filters from "../../../components/Filters/Filters";
-import Footer from "../../../components/Footer/Footer";
-import FloatingButton from "../../../components/FloatingButton/FloatingButton";
-import CategorySection from "../../../components/CategorySection/CategorySection";
+import Header from "../../components/home/Header";
+import Banner from "../../components/home/Banner";
+import ProductCard from "../../components/ProductCard/ProductCard";
+import Filters from "../../components/home/Filters";
+import Footer from "../../components/home/Footer";
+import FloatingButton from "../../components/home/FloatingButton";
+import CategorySection from "../../components/home/CategorySection";
+import BestTrendingSection from "../../components/home/BestTrendingSection";
 import { Box, Grid } from "@mui/material";
 
 export default function Home() {
@@ -30,6 +31,7 @@ export default function Home() {
       <Header categories={categories} />
       <Banner />
       <CategorySection />
+      <BestTrendingSection />
       <Box sx={{ p: 3 }}>
         <Filters
           availability={availability}

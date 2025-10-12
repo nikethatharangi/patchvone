@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import menImg from "../../assets/categories/men.png";
 import womenImg from "../../assets/categories/women.png";
@@ -11,7 +11,7 @@ export default function CategorySection() {
     { name: "MENS", image: menImg },
     { name: "WOMENS", image: womenImg },
     { name: "UNISEX", image: unisexImg },
-    { name: "Accessories", image: accessoriesImg },
+    { name: "ACCESSORIES", image: accessoriesImg },
   ];
 
  
@@ -30,8 +30,8 @@ export default function CategorySection() {
             key={cat.name}
             sx={{
               position: "relative",
-              width: { xs: "100%", sm: "48%", md: "23%" },
-              height: { xs: 200, sm: 250, md: 400 },
+              width: { xs: "100%", sm: "48%", md: "23%" }, // roughly 4 per row
+              height: "auto",
               cursor: "pointer",
               borderRadius: 2,
               overflow: "hidden",
@@ -44,7 +44,7 @@ export default function CategorySection() {
               style={{
                 width: "100%",
                 height: "100%",
-                objectFit: "cover",
+                objectFit: { xs: "contain", sm: "cover" },
                 objectPosition: "center",
                 transition: "transform 0.4s ease",
                 borderRadius: "12px",

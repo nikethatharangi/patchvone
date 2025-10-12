@@ -2,7 +2,7 @@
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "./styles/theme";
 import './App.css';
-import Home from "./pages/Client/Home/Home";
+import Home from "./pages/Client/Home";
 
 function App() {
   return (

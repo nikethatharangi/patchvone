@@ -26,7 +26,12 @@ export default function Banner() {
           textShadow: "0 2px 6px rgba(0,0,0,0.7)",
         }}
       >
-        <Typography variant="h4" fontWeight="bold">
+        <Typography
+        sx={{ 
+          fontSize: { xs: "1rem", sm: "1.2rem", md: "2.5rem" },
+          variant: "h4",
+          fontWeight: "bold"
+        }}>
           New Arrivals are Here
         </Typography>
         <Typography>Shop the latest trends now</Typography>
