@@ -9,7 +9,7 @@ const theme = createTheme({
       contrastText: "#111B1E", // text color on primary background
     },
     secondary: {
-      main: "#f59e0b", // golden yellow / accent color
+      main: "#aa9d75", // golden yellow / accent color
       contrastText: "#000000",
     },
     background: {
@@ -22,8 +22,8 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "cursive",
-    h4: { fontWeight: 600 },
+    fontFamily: "'Montserrat', sans-serif",
+    h4: { fontWeight: 400 },
     button: { textTransform: "none" }, // disables uppercase buttons
   },
 });

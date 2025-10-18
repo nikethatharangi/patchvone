@@ -7,6 +7,9 @@ import Footer from "../../components/home/Footer";
 import FloatingButton from "../../components/home/FloatingButton";
 import CategorySection from "../../components/home/CategorySection";
 import BestTrendingSection from "../../components/home/BestTrendingSection";
+import FeatureHighlights from "../../components/home/FeatureHighlights";
+import BackToTop from "../../components/home/BackToTop";
+import NewsletterSection from "../../components/home/NewsLetterSection";
 import { Box, Grid } from "@mui/material";
 
 export default function Home() {
@@ -32,7 +35,10 @@ export default function Home() {
       <Banner />
       <CategorySection />
       <BestTrendingSection />
-      <Box sx={{ p: 3 }}>
+      <FeatureHighlights />
+      <BackToTop />
+      <NewsletterSection />
+      {/* <Box sx={{ p: 3 }}>
         <Filters
           availability={availability}
           setAvailability={setAvailability}
@@ -44,7 +50,7 @@ export default function Home() {
             <ProductCard key={index} product={product} />
           ))}
         </Grid>
-      </Box>
+      </Box> */}
       <Footer />
       <FloatingButton />
     </>
