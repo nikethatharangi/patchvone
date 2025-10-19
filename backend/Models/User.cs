@@ -20,7 +20,10 @@ namespace backend.Models
         public string PaymentCardNo { get; set; }
         public string PaymentCardExpireDate { get; set; }
         public string PaymentCardCVV { get; set; }
+        public string ShippingAddress { get; set; }
         public DateTime CreateDate { get; set; }
 
+        public ICollection<Cart> Cart { get; set; }
+        public ICollection<Order> Order { get; set; }
     }
 }

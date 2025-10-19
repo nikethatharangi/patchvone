@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Models;
 
@@ -11,9 +12,11 @@ using backend.Models;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251019111245_AddCourierstbl")]
+    partial class AddCourierstbl
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,9 +126,6 @@ namespace backend.Migrations
                     b.Property<float>("CourierCharges")
                         .HasColumnType("real");
 
-                    b.Property<DateTime>("CreateDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -181,9 +181,6 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("CollectionId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -200,9 +197,6 @@ namespace backend.Migrations
                     b.Property<string>("ProductCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProductCollectionCollectionId")
-                        .HasColumnType("int");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -222,29 +216,7 @@ namespace backend.Migrations
 
                     b.HasKey("ProductId");
 
-                    b.HasIndex("ProductCollectionCollectionId");
-
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("backend.Models.ProductCollection", b =>
-                {
-                    b.Property<int>("CollectionId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CollectionId"));
-
-                    b.Property<string>("CollectionName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CollectionId");
-
-                    b.ToTable("ProductCollections");
                 });
 
             modelBuilder.Entity("backend.Models.ProductImage", b =>
@@ -366,17 +338,6 @@ namespace backend.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("backend.Models.Product", b =>
-                {
-                    b.HasOne("backend.Models.ProductCollection", "ProductCollection")
-                        .WithMany("Product")
-                        .HasForeignKey("ProductCollectionCollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ProductCollection");
-                });
-
             modelBuilder.Entity("backend.Models.ProductImage", b =>
                 {
                     b.HasOne("backend.Models.Product", "Product")
@@ -400,11 +361,6 @@ namespace backend.Migrations
                     b.Navigation("OrderDetails");
 
                     b.Navigation("ProductImage");
-                });
-
-            modelBuilder.Entity("backend.Models.ProductCollection", b =>
-                {
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
