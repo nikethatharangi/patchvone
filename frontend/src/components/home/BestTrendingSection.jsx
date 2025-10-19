@@ -138,8 +138,8 @@ const BestTrendingSection = () => {
         value={selectedCategory}
         onChange={(e, val) => setSelectedCategory(val)}
         centered
-        textColor="primary"
-        indicatorColor="primary"
+        textColor="secondary"
+        indicatorColor="secondary"
         sx={{ mb: 4 }}
       >
         {["Men", "Women", "Unisex", "Accessories"].map((cat) => (
