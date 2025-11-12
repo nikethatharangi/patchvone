@@ -11,4 +11,5 @@ namespace backend.Models
         public string BannerName { get; set; }
         public string BannerPath { get; set; }
     }
+
 }
