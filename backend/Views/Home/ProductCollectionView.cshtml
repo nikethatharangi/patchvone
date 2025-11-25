@@ -1,0 +1,56 @@
+﻿@model backend.Models.ProductCollection
+
+@{
+    ViewData["Title"] = "ProductCollectionView";
+}
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<h4>ProductCollection</h4>
+<hr />
+<div class="row">
+    <div class="col-md-2">
+        <form asp-action="ProductCollectionView" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CollectionName" class="control-label">Collection Name</label>
+                <input asp-for="CollectionName" class="form-control" />
+                <span asp-validation-for="CollectionName" class="text-danger"></span>
+            </div>
+           
+            <div class="form-group" style="padding-top:20px;">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div style="padding-top:20px;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>CollectionId</th>
+                <th>CollectionName</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ProductCollectionList)
+            {
+                <tr>
+                    <td>@item.CollectionId</td>
+                    <td>@item.CollectionName</td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

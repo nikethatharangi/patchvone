@@ -1,0 +1,167 @@
+﻿@model backend.Models.Product
+
+@{
+    ViewData["Title"] = "ProductView";
+}
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+<h4>Product</h4>
+<hr />
+<div class="row">
+    <div class="col">
+        <form asp-action="ProductView" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+           <div class="row">
+               <div class="col">
+                    <div class="form-group">
+                        <label asp-for="ProductName" class="control-label">Product Name</label>
+                        <input asp-for="ProductName" class="form-control" />
+                        <span asp-validation-for="ProductName" class="text-danger"></span>
+                    </div>
+               </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="ProductType" class="control-label">ProductType</label>
+                        <select id="myDropdown" asp-for="Category" class="form-control">
+                            <option value="">-- Select --</option>
+                            <option value="1">T-Shirt(Oversized)</option>
+                            <option value="2">T-Shirt(Regular)</option>
+                            <option value="3">Shirt</option>
+                            <option value="4">Cap</option>
+                        </select>
+                        <span asp-validation-for="ProductType" class="text-danger"></span>
+                    </div>
+                </div>                
+           </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Size" class="control-label">Size</label>
+                        <select id="DropdownSize" asp-for="Size" class="form-control">
+                            <option value="">-- Select --</option>
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                        </select>
+                        <span asp-validation-for="Size" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="StockQuantity" class="control-label">Stock Quantity</label>
+                        <input type="number" asp-for="StockQuantity" class="form-control" />
+                        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="OldPrice" class="control-label">Old Price</label>
+                        <input asp-for="OldPrice" class="form-control" />
+                        <span asp-validation-for="OldPrice" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="NewPrice" class="control-label">New Price</label>
+                        <input asp-for="NewPrice" class="form-control" />
+                        <span asp-validation-for="NewPrice" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Category" class="control-label">Category</label>
+                        <select id="myDropdown" asp-for="Category" class="form-control">
+                            <option value="">-- Select --</option>
+                            <option value="1">Men</option>
+                            <option value="2">Women</option>
+                            <option value="3">Unisex</option>
+                            <option value="4">Accessories</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="CollectionId" class="control-label">Collection</label>
+                        <select asp-for="CollectionId"
+                                asp-items="@(new SelectList(ViewBag.Collections, "CollectionId", "CollectionName"))"
+                                class="form-control">
+                        </select>
+                        <span asp-validation-for="CollectionId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Image 1</label>
+                    <input type="file" name="ImageFiles" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Image 2</label>
+                    <input type="file" name="ImageFiles" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Image 3</label>
+                    <input type="file" name="ImageFiles" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Image 4</label>
+                    <input type="file" name="ImageFiles" class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group" style="padding-top:20px;">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div style="padding-top:20px;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ProductId</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>Old Price</th>
+                <th>New Price</th>
+                <th>Category</th>
+                <th>Collection</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewBag.ProductList)
+            {
+                <tr>
+                    <td>@item.ProductId</td>
+                    <td>@item.Name</td>
+                    <td>@item.ProductType</td>
+                    <td>@item.Size</td>
+                    <td>@item.StockQuantity</td>
+                    <td>@item.OldPrice</td>
+                    <td>@item.NewPrice</td>
+                    <td>@item.Category</td>
+                    <td>@item.Collection</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
