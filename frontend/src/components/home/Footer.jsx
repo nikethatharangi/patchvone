@@ -5,7 +5,6 @@ import EmailIcon from "@mui/icons-material/Email";
 import InstagramIcon from "../../assets/social_media/instagram.png";
 import FacebookIcon from "../../assets/social_media/facebook.png";
 import WhatsappIcon from "../../assets/social_media/whatsapp.png";
-import TiktokIcon from "../../assets/social_media/tiktok.png";
 import logo from "../../assets/banners/logo-footer.png";
 
 const Footer = () => {
@@ -109,9 +108,6 @@ const Footer = () => {
           </a>
           <a href="https://wa.me/94712345678" target="_blank" rel="noopener noreferrer">
             <img src={WhatsappIcon} alt="WhatsApp" style={{ width: 28, height: 28 }} />
-          </a>
-          <a href="https://wa.me/94712345678" target="_blank" rel="noopener noreferrer">
-            <img src={TiktokIcon} alt="Tiktok" style={{ width: 28, height: 28 }} />
           </a>
         </Box>
       </Box>
