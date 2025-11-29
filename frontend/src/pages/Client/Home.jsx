@@ -51,8 +51,8 @@ export default function Home() {
           ))}
         </Grid>
       </Box> */}
-      <Footer />
       <FloatingButton />
+      <Footer />
     </>
   );
 }

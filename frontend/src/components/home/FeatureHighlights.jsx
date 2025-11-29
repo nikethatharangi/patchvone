@@ -68,7 +68,6 @@ const FeatureHighlights = () => {
                   p: { xs: 1, sm: 2 },
                 }}
               >
-                {/* ✅ Icon or Image */}
                 {feature.type === "image" ? (
                   <Box
                     component="img"
@@ -97,7 +96,6 @@ const FeatureHighlights = () => {
                   </Box>
                 )}
 
-                {/* ✅ Text */}
                 <Typography
                   variant="h6"
                   sx={{
