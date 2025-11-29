@@ -33,6 +33,7 @@ import { useNavigate } from "react-router-dom";
 import FacebookIconImg from "../../assets/social_media/facebook.png";
 import InstagramIconImg from "../../assets/social_media/instagram.png";
 import WhatsappIconImg from "../../assets/social_media/whatsapp.png";
+import TiktokIconImg from "../../assets/social_media/tiktok.png";
 
 export default function Header({ categories }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -169,6 +170,9 @@ export default function Header({ categories }) {
               </a>
               <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer">
                 <img src={WhatsappIconImg} alt="WhatsApp" style={{ width: 24, height: 24 }} />
+              </a>
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+                <img src={TiktokIconImg} alt="Tiktok" style={{ width: 24, height: 24 }} />
               </a>
             </Box>
 
