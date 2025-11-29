@@ -40,7 +40,7 @@ namespace backend.Migrations
 
                     b.HasKey("BannerId");
 
-                    b.ToTable("Banners", (string)null);
+                    b.ToTable("Banners");
                 });
 
             modelBuilder.Entity("backend.Models.Cart", b =>
@@ -66,7 +66,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Cart", (string)null);
+                    b.ToTable("Cart");
                 });
 
             modelBuilder.Entity("backend.Models.Courier", b =>
@@ -89,7 +89,7 @@ namespace backend.Migrations
 
                     b.HasKey("CourierId");
 
-                    b.ToTable("Couriers", (string)null);
+                    b.ToTable("Couriers");
                 });
 
             modelBuilder.Entity("backend.Models.NewsLetter", b =>
@@ -106,7 +106,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("NewsLetters", (string)null);
+                    b.ToTable("NewsLetters");
                 });
 
             modelBuilder.Entity("backend.Models.Order", b =>
@@ -133,7 +133,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("backend.Models.OrderDetails", b =>
@@ -166,7 +166,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderDetails", (string)null);
+                    b.ToTable("OrderDetails");
                 });
 
             modelBuilder.Entity("backend.Models.Product", b =>
@@ -224,7 +224,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ProductCollectionCollectionId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("backend.Models.ProductCollection", b =>
@@ -244,7 +244,7 @@ namespace backend.Migrations
 
                     b.HasKey("CollectionId");
 
-                    b.ToTable("ProductCollections", (string)null);
+                    b.ToTable("ProductCollections");
                 });
 
             modelBuilder.Entity("backend.Models.ProductImage", b =>
@@ -270,7 +270,7 @@ namespace backend.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductsImage", (string)null);
+                    b.ToTable("ProductsImage");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>
@@ -314,7 +314,7 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("backend.Models.Cart", b =>
