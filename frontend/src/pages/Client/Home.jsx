@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <>
-      <Header categories={categories} />
+      {/* <Header categories={categories} /> */}
       <Banner />
       <CategorySection />
       <BestTrendingSection />

@@ -9,32 +9,31 @@ import {
   IconButton,
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
+  Collapse,
+  Divider,
   Modal,
   TextField,
   Fade,
   Typography,
   Grid,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import logo from "../../assets/banners/logo.png";
-
-import {
-  ListItemButton,
-  Collapse,
-  Divider,
-} from "@mui/material";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import logo from "../../assets/banners/logo.png";
+import { useNavigate } from "react-router-dom";
 
 // Social media icons
 import FacebookIconImg from "../../assets/social_media/facebook.png";
 import InstagramIconImg from "../../assets/social_media/instagram.png";
 import WhatsappIconImg from "../../assets/social_media/whatsapp.png";
+import TiktokIconImg from "../../assets/social_media/tiktok.png";
 
 export default function Header({ categories }) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -42,8 +41,11 @@ export default function Header({ categories }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [openIndex, setOpenIndex] = useState(null);
 
-  // Example product data (replace with API later)
+  const navigate = useNavigate();
+
+  // Mock products for search results
   const products = [
     {
       id: 1,
@@ -63,20 +65,10 @@ export default function Header({ categories }) {
       price: "Rs. 5,000",
       image: "https://images.unsplash.com/photo-1593032465171-8b1c4b8b86f2?w=400",
     },
-    {
-      id: 4,
-      name: "Stylish Slippers",
-      price: "Rs. 1,200",
-      image: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=400",
-    },
   ];
 
-  const [openIndex, setOpenIndex] = useState(null);
-
-  const handleToggle = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
+  // Handlers
+  const handleToggle = (index) => setOpenIndex(openIndex === index ? null : index);
   const handleMenuOpen = (event, menuName) => {
     if (activeMenu === menuName) {
       setAnchorEl(null);
@@ -86,12 +78,10 @@ export default function Header({ categories }) {
       setActiveMenu(menuName);
     }
   };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
     setActiveMenu(null);
   };
-
   const handleSearchOpen = () => setSearchOpen(true);
   const handleSearchClose = () => {
     setSearchOpen(false);
@@ -102,16 +92,24 @@ export default function Header({ categories }) {
     p.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+    // ✅ Navigate to category/subcategory
+  const handleCategoryClick = (main, sub) => {
+    const path = `/${main.toLowerCase()}/${sub.toLowerCase()}`;
+    navigate(path);
+    handleMenuClose();
+    setDrawerOpen(false);
+  };
+
   return (
     <>
       <AppBar position="sticky" sx={{ backgroundColor: "primary.main" }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
-          {/* Left - Logo */}
+          {/* Logo */}
           <Box sx={{ display: "flex", alignItems: "center" }}>
-            <img src={logo} alt="Logo" style={{ height: "40px", cursor: "pointer" }} />
+            <img src={logo} alt="Logo" style={{ height: 40, cursor: "pointer" }} />
           </Box>
 
-          {/* Center - Menu */}
+          {/* Desktop Menu */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
@@ -143,17 +141,14 @@ export default function Header({ categories }) {
                     slotProps={{
                       list: { sx: { minWidth: 180 } },
                     }}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "center",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "center",
-                    }}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                    transformOrigin={{ vertical: "top", horizontal: "center" }}
                   >
                     {cat.subcategories.map((sub) => (
-                      <MenuItem key={sub} onClick={handleMenuClose}>
+                      <MenuItem
+                        key={sub}
+                        onClick={() => handleCategoryClick(cat.name, sub)}
+                      >
                         {sub}
                       </MenuItem>
                     ))}
@@ -163,16 +158,10 @@ export default function Header({ categories }) {
             ))}
           </Box>
 
-          {/* Right - Icons */}
+          {/* Right Icons */}
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {/* Social Media Icons */}
-            <Box
-              sx={{
-                display: { xs: "none", md: "flex" }, // hide on mobile, show on md+
-                alignItems: "center",
-                gap: 2,
-              }}
-            >
+            {/* Social Media (hidden on mobile) */}
+            <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
                 <img src={FacebookIconImg} alt="Facebook" style={{ width: 24, height: 24 }} />
               </a>
@@ -182,9 +171,11 @@ export default function Header({ categories }) {
               <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer">
                 <img src={WhatsappIconImg} alt="WhatsApp" style={{ width: 24, height: 24 }} />
               </a>
+              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+                <img src={TiktokIconImg} alt="Tiktok" style={{ width: 24, height: 24 }} />
+              </a>
             </Box>
 
-            {/* Search, Cart, Profile */}
             <IconButton color="inherit" onClick={handleSearchOpen}>
               <SearchIcon />
             </IconButton>
@@ -208,13 +199,12 @@ export default function Header({ categories }) {
         </Toolbar>
       </AppBar>
 
+      {/* Mobile Drawer */}
       <Drawer
         anchor="right"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        sx={{
-          display: { xs: "block", md: "none" }, // Only visible in mobile
-        }}
+        sx={{ display: { xs: "block", md: "none" } }}
       >
         <Box
           sx={{
@@ -226,7 +216,6 @@ export default function Header({ categories }) {
             p: 2,
           }}
         >
-          {/* Category List */}
           <List>
             {categories.map((cat, index) => {
               const isOpen = openIndex === index;
@@ -244,22 +233,15 @@ export default function Header({ categories }) {
                     {isOpen ? <ExpandLess /> : <ExpandMore />}
                   </ListItemButton>
 
-                  {/* Subcategories collapse */}
                   <Collapse in={isOpen} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       {cat.subcategories.map((sub) => (
                         <ListItemButton
                           key={sub}
                           sx={{ pl: 4 }}
-                          onClick={() => setDrawerOpen(false)}
+                          onClick={() => handleCategoryClick(cat.name, sub)}
                         >
-                          <ListItemText
-                            primary={sub}
-                            primaryTypographyProps={{
-                              fontFamily: "Montserrat, sans-serif",
-                              color: "#555",
-                            }}
-                          />
+                          <ListItemText primary={sub} />
                         </ListItemButton>
                       ))}
                     </List>
@@ -271,7 +253,7 @@ export default function Header({ categories }) {
             })}
           </List>
 
-          {/* Social Icons */}
+          {/* Social Media (bottom only in mobile) */}
           <Box
             sx={{
               display: "flex",
@@ -282,34 +264,20 @@ export default function Header({ categories }) {
               pt: 2,
             }}
           >
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
               <img src={FacebookIconImg} alt="Facebook" style={{ width: 28, height: 28 }} />
             </a>
-
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
               <img src={InstagramIconImg} alt="Instagram" style={{ width: 28, height: 28 }} />
             </a>
-
-            <a
-              href="https://whatsapp.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer">
               <img src={WhatsappIconImg} alt="WhatsApp" style={{ width: 28, height: 28 }} />
             </a>
           </Box>
         </Box>
       </Drawer>
 
-      {/* 🔍 Search Modal with Results */}
+      {/* Search Modal */}
       <Modal open={searchOpen} onClose={handleSearchClose} closeAfterTransition>
         <Fade in={searchOpen}>
           <Box
@@ -327,7 +295,6 @@ export default function Header({ categories }) {
               overflowY: "auto",
             }}
           >
-            {/* Search Input */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               <SearchIcon sx={{ color: "text.secondary" }} />
               <TextField
@@ -340,7 +307,6 @@ export default function Header({ categories }) {
               />
             </Box>
 
-            {/* Results */}
             {searchQuery && (
               <Box sx={{ mt: 3 }}>
                 {filteredProducts.length > 0 ? (
@@ -370,7 +336,7 @@ export default function Header({ categories }) {
                           />
                           <Box>
                             <Typography sx={{ fontWeight: 600 }}>{item.name}</Typography>
-                            <Typography sx={{ color: "#f59e0b", fontWeight: 500 }}>
+                            <Typography sx={{ color: "#aa9d7b", fontWeight: 500 }}>
                               {item.price}
                             </Typography>
                           </Box>
