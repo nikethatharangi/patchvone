@@ -108,6 +108,12 @@ namespace backend.Controllers
         [HttpPost]
         public IActionResult BannerView(Banner banner, IFormFile BannerImage)
         {
+            if (BannerImage == null || BannerImage.Length == 0)
+            {
+                ModelState.AddModelError("", "Please select an image.");
+                return View();
+            }
+
             var folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Banners");
 
             if (!Directory.Exists(folderPath))
@@ -115,13 +121,12 @@ namespace backend.Controllers
                 Directory.CreateDirectory(folderPath);
             }
 
-            var fileName = Path.GetFileName(BannerImage.FileName);
-
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(BannerImage.FileName);
             var filePath = Path.Combine(folderPath, fileName);
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                BannerImage.CopyToAsync(stream);
+                BannerImage.CopyTo(stream);   
             }
 
             banner.BannerName = fileName;
@@ -130,12 +135,13 @@ namespace backend.Controllers
             _dbcontext.Banners.Add(banner);
             _dbcontext.SaveChanges();
 
-            ViewBag.Banner = _dbcontext.Banners.ToList();
+            //ViewBag.Banner = _dbcontext.Banners.ToList();
 
             ModelState.Clear();
 
             return View();
         }
+        
 
         [HttpGet]
         public IActionResult CurrierView()
