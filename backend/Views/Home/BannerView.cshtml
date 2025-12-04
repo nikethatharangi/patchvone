@@ -12,19 +12,20 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="BannerView" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="BannerView" method="post" enctype="multipart/form-data">
             <div class="form-group">
-                <label class="control-label">Select Banner Image</label>
-                <input type="file" asp-for="BannerName" class="form-control" />
+                <label asp-for="BannerName" class="control-label">Banner</label>
+                <input type="file" name="BannerImage" class="form-control" />
+                <span asp-validation-for="BannerName" class="text-danger"></span>
             </div>
+
             <div class="form-group" style="padding-top:20px;">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+
     </div>
 </div>
-
 
 
 @section Scripts {
