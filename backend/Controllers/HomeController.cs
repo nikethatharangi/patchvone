@@ -46,17 +46,29 @@ namespace backend.Controllers
             var collections = _dbcontext.ProductCollections.ToList();
             ViewBag.Collections = collections;
 
-            ViewBag.ProductList = _dbcontext.Products.ToList();
+            //ViewBag.ProductList = _dbcontext.Products.ToList();
             return View();
         }
 
         [HttpPost]
         public IActionResult ProductView(Product product, List<IFormFile> ImageFiles)
         {
+            if (product.CollectionId == 0)
+            {
+                ModelState.AddModelError("CollectionId", "Please select a collection.");
+                ViewBag.Collections = _dbcontext.ProductCollections.ToList();
+                return View(product);
+            }
+
+            product.CreatedUser = "User01";
+            product.CreatedDate = DateTime.Now;
+
+            _dbcontext.Products.Add(product);
+            _dbcontext.SaveChanges();
+
             int productId = product.ProductId;
 
             string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductImages");
-
             if (!Directory.Exists(folder))
                 Directory.CreateDirectory(folder);
 
@@ -64,13 +76,12 @@ namespace backend.Controllers
             {
                 if (image != null && image.Length > 0)
                 {
-                    string fileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(image.FileName);
-
+                    string fileName = Guid.NewGuid() + "_" + Path.GetFileName(image.FileName);
                     string filePath = Path.Combine(folder, fileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        image.CopyToAsync(stream);
+                        image.CopyTo(stream);
                     }
 
                     ProductImage img = new ProductImage
@@ -84,15 +95,9 @@ namespace backend.Controllers
                 }
             }
 
-            product.CreatedDate = DateTime.Now;
-            _dbcontext.Products.Add(product);
             _dbcontext.SaveChanges();
 
-            var collections = _dbcontext.ProductCollections.ToList();
-            ViewBag.Collections = collections;
-
-            ViewBag.ProductList = _dbcontext.Products.ToList();
-
+            ViewBag.Collections = _dbcontext.ProductCollections.ToList();
             ModelState.Clear();
 
             return View();

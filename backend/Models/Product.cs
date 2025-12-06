@@ -19,9 +19,11 @@ namespace backend.Models
         public string CreatedUser { get; set; }
         public DateTime CreatedDate { get; set; }
 
-        [ForeignKey("CollectionId")]
         public int CollectionId { get; set; }
+
+        [ForeignKey("CollectionId")]
         public ProductCollection ProductCollection { get; set; }
+
 
         public ICollection<ProductImage> ProductImage { get; set; }
         public ICollection<Cart> Cart { get; set; }
