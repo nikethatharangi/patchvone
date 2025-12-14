@@ -2,7 +2,128 @@
     ViewData["Title"] = "Home Page";
 }
 
+
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+   
+    
+    <h3>Banner</h3>
+    <div style="padding-top:20px;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>BannerId</th>
+                    <th>Banner</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.Banners)
+                {
+                    <tr>
+                        <td>@item.BannerId</td>
+                        <td><img src="@Url.Content(item.BannerPath)" style="width:200px"></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <h3>Product Collection List</h3>
+    <div style="padding-top:20px;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>CollectionId</th>
+                    <th>CollectionName</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.CollectionList)
+                {
+                    <tr>
+                        <td>@item.CollectionId</td>
+                        <td>@item.CollectionName</td>
+                      
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    <h3>Product List</h3>
+    <div style="padding-top:20px;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ProductCode</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Size</th>
+                    <th>Quantity</th>
+                    <th>Old Price</th>
+                    <th>New Price</th>
+                    <th>Category</th>
+                    <th>Collection</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in ViewBag.ProductList)
+                {
+                    <tr>
+                        <td>@item.ProductCode</td>
+                        <td>@item.ProductName</td>
+                        <td>
+                            @{
+                                if(item.ProductType == "1")
+                                {
+                                    @: T-Shirt(Oversized)
+                                }
+                                else if (item.ProductType == "2")
+                                {
+                                    @: T-Shirt(Regular)
+                                }
+                                else if (item.ProductType == "3")
+                                {
+                                    @: Shirt
+                                }
+                                else if (item.ProductType == "4")
+                                {
+                                    @: Cap
+								}
+                            }
+                        </td>
+                        <td>@item.Size</td>
+                        <td>@item.StockQuantity</td>
+                        <td>@item.OldPrice</td>
+                        <td>@item.NewPrice</td>
+                        <td>
+                            @{
+                                if(item.Category == "1")
+                                {
+									@: Men
+                                }
+                                else if (item.Category == "2")
+                                {
+                                    @: Women
+                                }
+                                else if (item.Category == "3")
+                                {
+                                    @: Unisex
+								}
+                                else if (item.Category == "4")
+                                {
+                                    @: Accessories
+                                }
+                            }
+                        </td>
+                        <td>@item.ProductCollection?.CollectionName</td>
+                       
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
 </div>

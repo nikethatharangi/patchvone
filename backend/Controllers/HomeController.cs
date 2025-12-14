@@ -8,6 +8,7 @@ namespace backend.Controllers
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _dbcontext;
+        public ApplicationDbContext _db => _dbcontext;
 
         public HomeController(ApplicationDbContext dbcontext)
         {
@@ -16,6 +17,9 @@ namespace backend.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Banners = _dbcontext.Banners.OrderByDescending(b => b.BannerId).Take(1).ToList();
+            ViewBag.ProductList = _dbcontext.Products.ToList();
+            ViewBag.CollectionList = _dbcontext.ProductCollections.ToList();
             return View();
         }
 
