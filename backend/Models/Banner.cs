@@ -10,6 +10,7 @@ namespace backend.Models
         public int BannerId { get; set; }
         public string BannerName { get; set; }
         public string BannerPath { get; set; }
+        public string BannerText { get; set; }
     }
 
 }
