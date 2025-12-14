@@ -1,21 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
-import bannerImage from "../../assets/banners/banner.png";
 import { getBanners } from "../../api/bannerApi";
+
+const BASE_URL = "http://localhost:5276";
 
 export default function Banner() {
   const [bannerUrl, setBannerUrl] = useState(null);
-    useEffect(() => {
+
+  useEffect(() => {
     const loadBanner = async () => {
       try {
         const banners = await getBanners();
+        console.log("Fetched banners:", banners);
 
         if (banners.length > 0) {
-          const lastBanner = banners[banners.length - 1]; // Get last record
-          setBannerUrl(lastBanner.BannerPath);          // field name from DB
+          const lastRecord = banners[banners.length - 1]; // last record
+          
+          // full URL for the image
+          const fullImageUrl = BASE_URL + lastRecord.bannerPath;
+
+          setBannerUrl(fullImageUrl);
         }
       } catch (error) {
-        console.error("Error fetching banners:", error);
+        console.error("Error fetching banner:", error);
       }
     };
 

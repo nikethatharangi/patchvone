@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5276/api/Banners";
+const BASE_URL = "http://localhost:5276";
 
 export const getBanners = async () => {
-  const response = await axios.get(API_URL);
+  const response = await axios.get(`${BASE_URL}/api/Banners`);
   return response.data;
 };
