@@ -18,7 +18,11 @@
                 <input type="file" name="BannerImage" class="form-control" />
                 <span asp-validation-for="BannerName" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="BannerText" class="control-label">Banner Text</label>
+                <input asp-for="BannerText" class="form-control" />
+                <span asp-validation-for="BannerText" class="text-danger"></span>
+            </div>
             <div class="form-group" style="padding-top:20px;">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

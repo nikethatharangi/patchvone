@@ -20,7 +20,17 @@
                 <input asp-for="CollectionName" class="form-control" />
                 <span asp-validation-for="CollectionName" class="text-danger"></span>
             </div>
-           
+            <div class="form-group">
+                <label asp-for="ColletionType" class="control-label">Category</label>
+                <select id="DropdownCollectionCategory" asp-for="ColletionType" class="form-control">
+                    <option value="0">-- Select --</option>
+                    <option value="1">Men</option>
+                    <option value="2">Women</option>
+                    <option value="3">Unisex</option>
+                    <option value="4">Accessories</option>
+                </select>
+                <span asp-validation-for="ColletionType" class="text-danger"></span>
+            </div>
             <div class="form-group" style="padding-top:20px;">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -28,28 +38,6 @@
     </div>
 </div>
 
-
-<div style="padding-top:20px;">
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>CollectionId</th>
-                <th>CollectionName</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in ViewBag.ProductCollectionList)
-            {
-                <tr>
-                    <td>@item.CollectionId</td>
-                    <td>@item.CollectionName</td>
-                    
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -10,6 +10,7 @@ namespace backend.Models
         public int CollectionId { get; set; }
         public string CollectionName { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string ColletionType { get; set; }
         public ICollection<Product> Product { get; set; }
     }
 }
