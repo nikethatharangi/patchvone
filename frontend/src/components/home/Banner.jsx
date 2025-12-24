@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { getBanners } from "../../api/bannerApi";
 
 const BASE_URL = "http://localhost:5276";
+let bannerText = '';
 
 export default function Banner() {
   const [bannerUrl, setBannerUrl] = useState(null);
@@ -11,13 +12,13 @@ export default function Banner() {
     const loadBanner = async () => {
       try {
         const banners = await getBanners();
-        console.log("Fetched banners:", banners);
 
         if (banners.length > 0) {
           const lastRecord = banners[banners.length - 1]; // last record
           
           // full URL for the image
           const fullImageUrl = BASE_URL + lastRecord.bannerPath;
+          bannerText = lastRecord.bannerText;
 
           setBannerUrl(fullImageUrl);
         }
@@ -58,7 +59,7 @@ export default function Banner() {
           variant: "h4",
           fontWeight: "bold"
         }}>
-          New Arrivals are Here
+          {bannerText}
         </Typography>
         <Typography>Shop the latest trends now</Typography>
       </Box>

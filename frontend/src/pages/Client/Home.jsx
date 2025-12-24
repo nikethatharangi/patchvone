@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../../components/home/Header";
 import Banner from "../../components/home/Banner";
 import ProductCard from "../../components/ProductCard/ProductCard";
@@ -11,27 +11,74 @@ import FeatureHighlights from "../../components/home/FeatureHighlights";
 import BackToTop from "../../components/home/BackToTop";
 import NewsletterSection from "../../components/home/NewsLetterSection";
 import { Box, Grid } from "@mui/material";
+import { getProductCollections } from "../../api/productCollectionApi";
+
+
+
 
 export default function Home() {
-  const categories = [
-    { name: "Men's", subcategories: ["Shop All", "Shorts", "Shirts"] },
-    { name: "Women's", subcategories: ["Shop All", "Skirts", "Baggy Tees"] },
-    { name: "Unisex", subcategories: ["Shop All", "Pants", "Baggy Tees"] },
-    { name: "Accessories", subcategories: ["Shop All", "Caps", "Water Bottles"] },
-  ];
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+  const loadProductCollections = async () => {
+    try {
+      const productCollections = await getProductCollections();
 
-  const [availability, setAvailability] = useState("all");
-  const [priceRange, setPriceRange] = useState([0, 500]);
+      const menCollections = productCollections
+        .filter((c) => c.colletionType === "1")
+        .map((c) => ({
+          id: c.collectionId,
+          name: c.collectionName,
+        }));
 
-  const products = [
-    { name: "Men Shirt", price: 50, available: true },
-    { name: "Women Skirt", price: 30, available: false },
-    { name: "Cap", price: 15, available: true },
-  ];
+      const womenCollections = productCollections
+        .filter((c) => c.colletionType === "2")
+        .map((c) => ({
+          id: c.collectionId,
+          name: c.collectionName,
+        }));
+
+      const unisexCollections = productCollections
+        .filter((c) => c.colletionType === "3")
+        .map((c) => ({
+          id: c.collectionId,
+          name: c.collectionName,
+        }));
+
+      const accesoriesCollections = productCollections
+        .filter((c) => c.colletionType === "4")
+        .map((c) => ({
+          id: c.collectionId,
+          name: c.collectionName,
+        }));
+
+      setCategories([
+        {
+          name: "Men",
+          subcategories: menCollections,
+        },
+        {
+          name: "Women",
+          subcategories: womenCollections,
+        },
+        { name: "Unisex",
+          subcategories: unisexCollections,
+        },
+        { name: "Accessories",
+          subcategories: accesoriesCollections,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching product collections:", error);
+    }
+  };
+
+  loadProductCollections();
+}, []);
+  
 
   return (
     <>
-      {/* <Header categories={categories} /> */}
+      {<Header categories={categories} />}
       <Banner />
       <CategorySection />
       <BestTrendingSection />

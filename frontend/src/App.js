@@ -10,38 +10,20 @@ import theme from "./styles/theme";
 import { ThemeProvider } from "@mui/material";
 
 function App() {
-  const [categories] = useState([
-    {
-      name: "Men",
-      subcategories: ["Shop All", "Shorts", "T-Shirts", "Hoodies"],
-    },
-    {
-      name: "Women",
-      subcategories: ["Shop All", "Dresses", "Tops", "Bottoms"],
-    },
-    {
-      name: "Unisex",
-      subcategories: ["Shop All", "T-Shirts", "Accessories"],
-    },
-    {
-      name: "Accessories",
-      subcategories: ["Shop All", "Hats", "Bags", "Belts"],
-    },
-  ]);
 
   return (
     <ThemeProvider theme={theme}>
       {/* <CssBaseline /> */}
       <Router>
-        <Header categories={categories} />
+        {/*<Header categories={categories} />*/}
 
         <Routes>
           {/* Home Page */}
           <Route path="/" element={<Home />} />
 
-          {/* Product Page — example: /men/shop-all */}
-          <Route path="/:mainCategory/:subCategory" element={<ProductPage />} />
-          <Route path="/product/:productId" element={<ProductDetailPage />} />
+          {/* Product Pages */}
+          <Route path="/:mainCategory/:collection/:collectionId" element={<ProductPage />} />
+          <Route path="/products/:productId" element={<ProductDetailPage />} />
         </Routes>
       </Router>
     </ThemeProvider>

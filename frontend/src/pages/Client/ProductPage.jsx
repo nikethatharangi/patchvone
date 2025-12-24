@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../../components/home/Footer";
+import { getProducts, getProductsByCollectionId } from "../../api/productApi";
+import { API_BASE_URL } from "../../api/productApi";
+
 import {
   Box,
   Grid,
@@ -13,137 +16,80 @@ import {
   ToggleButtonGroup,
 } from "@mui/material";
 
-// Mock products
-const allProducts = [
-  {
-    id: "1",
-    name: "Elegant Men’s Shirt",
-    price: 3200,
-    oldPrice: 4000,
-    discount: "20% OFF",
-    quantity: 5,
-    size: "M",
-    category: "Men",
-    subcategory: "Shop All",
-    images: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.pexels.com/photos/936559/pexels-photo-936559.jpeg",
-      "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    ],
-  },
-  {
-    id: "2",
-    name: "Artsy Women’s Dress",
-    price: 4500,
-    oldPrice: 5000,
-    discount: "10% OFF",
-    quantity: 0,
-    size: "L",
-    category: "Women",
-    subcategory: "Shop All",
-    images: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    ],
-  },
-  {
-    id: "3",
-    name: "Elegant Men’s Shirt",
-    price: 3200,
-    oldPrice: 4000,
-    discount: "20% OFF",
-    quantity: 5,
-    size: "M",
-    category: "Men",
-    subcategory: "Shop All",
-    images: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.pexels.com/photos/936559/pexels-photo-936559.jpeg",
-      "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    ],
-  },
-{
-    id: "4",
-    name: "Elegant Men’s Shirt",
-    price: 3200,
-    oldPrice: 4000,
-    discount: "20% OFF",
-    quantity: 5,
-    size: "M",
-    category: "Men",
-    subcategory: "Shop All",
-    images: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.pexels.com/photos/936559/pexels-photo-936559.jpeg",
-      "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    ],
-  },
-  {
-    id: "5",
-    name: "Elegant Men’s Shirt",
-    price: 3200,
-    oldPrice: 4000,
-    discount: "20% OFF",
-    quantity: 5,
-    size: "M",
-    category: "Men",
-    subcategory: "Shop All",
-    images: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.pexels.com/photos/936559/pexels-photo-936559.jpeg",
-      "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    ],
-  },
-  {
-    id: "6",
-    name: "Elegant Men’s Shirt",
-    price: 3200,
-    oldPrice: 4000,
-    discount: "20% OFF",
-    quantity: 5,
-    size: "M",
-    category: "Men",
-    subcategory: "Shop All",
-    images: [
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-      "https://images.pexels.com/photos/936559/pexels-photo-936559.jpeg",
-      "https://images.pexels.com/photos/428338/pexels-photo-428338.jpeg",
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    ],
-  },
-  // Add more products...
-];
-
 export default function ProductPage() {
-  const { mainCategory, subCategory } = useParams();
+
+  const { mainCategory = '', collection = '', collectionId = ''} = useParams();
   const navigate = useNavigate();
 
+  console.log('Params:', mainCategory, collection, collectionId);
+
+  const [products, setProducts] = useState([]);
+  const collectionName = products?.[0]?.subcategory || "";
+  console.log('Collection Name:', collectionName);
   const [availability, setAvailability] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 10000]);
   const [sizeFilter, setSizeFilter] = useState("all");
   const [selectedImages, setSelectedImages] = useState({});
 
-  // Filter products by category/subcategory
-  let products = allProducts.filter(
-    (p) =>
-      p.category.toLowerCase() === mainCategory.toLowerCase() &&
-      (subCategory.toLowerCase() === "shop all" ||
-        p.subcategory.toLowerCase() === subCategory.toLowerCase())
-  );
+useEffect(() => {
+  const loadProducts = async () => {
+    try {
+      let data;
+      const id = parseInt(collectionId);
+
+      if (!isNaN(id)) {
+        data = await getProductsByCollectionId(id);
+      } else {
+        data = await getProducts();
+      }
+
+      const transformed = data.map(product => ({
+        id: product.productId,
+        name: product.productName,
+        price: product.newPrice || 0,
+        oldPrice: product.oldPrice || 0,
+        discount:
+          product.oldPrice && product.oldPrice > product.newPrice
+            ? `${Math.round(
+                (1 - product.newPrice / product.oldPrice) * 100
+              )}% OFF`
+            : null,
+        quantity: Number(product.stockQuantity) || 0,
+        size: product.size || "",
+        category: product.category || "",
+        subcategory: product.productCollection?.collectionName || "",
+        images:
+          product.productImage && product.productImage.length > 0
+            ? product.productImage.map(img => `${API_BASE_URL}${img.imagePath}`)
+            : ["https://via.placeholder.com/400"], // fallback image
+      }));
+
+      setProducts(transformed);
+      console.log("Mapped products:", transformed);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  loadProducts();
+}, [collectionId]);
+
+  // Filter products by category
+  let filteredByCategory = products; // Remove category filter for now
+  console.log('Filtered by category:', filteredByCategory);
 
   // Apply filters
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = filteredByCategory.filter((p) => {
     if (availability === "in-stock" && p.quantity === 0) return false;
     if (sizeFilter !== "all" && p.size !== sizeFilter) return false;
     if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
     return true;
   });
+
+  const formattedMainCategory =
+  mainCategory
+    ? mainCategory.charAt(0).toUpperCase() + mainCategory.slice(1)
+    : "";
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -159,9 +105,10 @@ export default function ProductPage() {
             <Typography
                 variant="h6"
                 fontWeight={500}
-                sx={{ mb: 3, color: "#111B1E" }}
+                sx={{ mb: 3, color: "#111B1E", cursor: "pointer" }}
+                onClick={() => navigate("/")}
             >
-                {mainCategory} &gt; {subCategory}
+                {formattedMainCategory} &gt; {collectionName}
             </Typography>
 
             {/* Filters */}
@@ -256,92 +203,46 @@ export default function ProductPage() {
             {/* Product Grid */}
             <Grid container spacing={3} justifyContent="center">
                 {filteredProducts.length > 0 ? (
-                filteredProducts.map((item) => (
-                    <Grid item xs={6} sm={6} md={3} key={item.id}>
-                    <Card
+                    filteredProducts.map((item) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} xl={2.4} key={item.id}>
+                        <Card
                         sx={{
-                        cursor: "pointer",
-                        bgcolor: "#FFFCF5",
-                        height: { xs: 420, md: 460 },
-                        display: "flex",
-                        flexDirection: "column",
-                        "&:hover": { boxShadow: 3 },
-                        position: "relative",
+                            cursor: "pointer",
+                            bgcolor: "#FFFCF5",
+                            minHeight: { xs: 400, md: 460 },
+                            display: "flex",
+                            flexDirection: "column",
+                            "&:hover": { boxShadow: 3 },
+                            position: "relative",
                         }}
-                        onClick={() => navigate(`/product/${item.id}`)}
-                    >
+                        onClick={() => navigate(`/products/${item.id}`)}
+                        >
                         {/* Main Image */}
                         <CardMedia
-                        component="img"
-                        height={{xs: 420, md: 460}}
-                        image={selectedImages[item.id] || item.images[0]}
-                        alt={item.name}
-                        sx={{ 
-                            objectFit: "cover",     
-                            width: "100%", 
-                            display: "block" 
-                        }}
+                            component="img"
+                            image={selectedImages[item.id] || item.images[0]}
+                            alt={item.name}
+                            sx={{
+                            objectFit: "cover",
+                            width: "100%",
+                            height: { xs: 300, sm: 350, md: 400, lg: 450 },
+                            }}
                         />
 
-                        {/* Discount label */}
+                        {/* Discount Label */}
                         {item.discount && (
-                        <Chip
+                            <Chip
                             label={item.discount}
                             color="error"
                             size="small"
                             sx={{ position: "absolute", top: 10, left: 10, fontWeight: 600 }}
-                        />
+                            />
                         )}
 
-                        {/* Thumbnail Selector */}
-                        <Box sx={{ display: "flex", justifyContent: "center", gap: 1, p: 1 }}>
-                        {item.images.map((img, idx) => (
+                        {/* Sold Out Overlay */}
+                        {item.quantity === 0 && (
                             <Box
-                            key={idx}
-                            component="img"
-                            src={img}
                             sx={{
-                                width: { xs: 35, md: 40 },
-                                height: { xs: 35, md: 40 },
-                                objectFit: "cover",
-                                border:
-                                selectedImages[item.id] === img || (!selectedImages[item.id] && idx === 0)
-                                    ? "2px solid #aa9d75"
-                                    : "1px solid #FFFCF5",
-                                borderRadius: 1,
-                                cursor: "pointer",
-                            }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedImages({ ...selectedImages, [item.id]: img });
-                            }}
-                            />
-                        ))}
-                        </Box>
-
-                        {/* Product Info */}
-                        <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography variant="subtitle1" fontWeight={600} color="#111B1E">
-                            {item.name}
-                        </Typography>
-
-                        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mt: 0.5 }}>
-                            {item.oldPrice && (
-                            <Typography
-                                variant="body2"
-                                sx={{ textDecoration: "line-through", color: "text.secondary" }}
-                            >
-                                Rs. {item.oldPrice.toLocaleString()}
-                            </Typography>
-                            )}
-                            <Typography variant="body1" fontWeight={400} color="#111B1E">
-                            Rs. {item.price.toLocaleString()}
-                            </Typography>
-                        </Box>
-                            {/* Sold Out overlay */}
-                            {item.quantity === 0 && (
-                            <Box
-                                sx={{
                                 position: "absolute",
                                 top: 0,
                                 left: 0,
@@ -356,19 +257,69 @@ export default function ProductPage() {
                                 fontSize: { xs: 16, md: 18 },
                                 zIndex: 1,
                                 textTransform: "uppercase",
-                                }}
+                            }}
                             >
-                                Sold Out
+                            Sold Out
                             </Box>
+                        )}
+
+                        {/* Thumbnail Selector */}
+                        <Box sx={{ display: "flex", justifyContent: "center", gap: 1, p: 1 }}>
+                            {item.images.map((img, idx) => (
+                            <Box
+                                key={idx}
+                                component="img" 
+                                src={img}
+                                sx={{
+                                width: { xs: 35, md: 40 },
+                                height: { xs: 35, md: 40 },
+                                objectFit: "cover",
+                                border:
+                                    selectedImages[item.id] === img || (!selectedImages[item.id] && idx === 0)
+                                    ? "2px solid #aa9d75"
+                                    : "1px solid #FFFCF5",
+                                borderRadius: 1,
+                                cursor: "pointer",
+                                }}
+                                onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedImages({ ...selectedImages, [item.id]: img });
+                                }}
+                            />
+                            ))}
+                        </Box>
+
+                        {/* Product Info: Name and Price */}
+                        <CardContent sx={{ flexGrow: 1 }}>
+                            <Typography
+                            variant="subtitle1"
+                            fontWeight={600}
+                            color="#111B1E"
+                            sx={{ mb: 1 }}
+                            >
+                            {item.name}
+                            </Typography>
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                            {item.oldPrice && (
+                                <Typography
+                                variant="body2"
+                                sx={{ textDecoration: "line-through", color: "text.secondary" }}
+                                >
+                                Rs. {item.oldPrice.toLocaleString()}
+                                </Typography>
                             )}
+                            <Typography variant="body1" fontWeight={600} color="#111B1E">
+                                Rs. {item.price.toLocaleString()}
+                            </Typography>
+                            </Box>
                         </CardContent>
-                    </Card>
+                        </Card>
                     </Grid>
-                ))
+                    ))
                 ) : (
-                <Typography sx={{ mt: 5, color: "#111B1E" }}>
+                    <Typography sx={{ mt: 5, color: "#111B1E" }}>
                     No products found in this category.
-                </Typography>
+                    </Typography>
                 )}
             </Grid>
         </Box>
