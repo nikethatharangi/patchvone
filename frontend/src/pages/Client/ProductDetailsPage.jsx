@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { getProduct } from "../../api/productApi";
+import { API_BASE_URL } from "../../api/productApi";
 import {
   Box,
   Typography,
   Grid,
   Card,
   CardMedia,
-  CardContent,
   Button,
   Chip,
 } from "@mui/material";
@@ -15,33 +16,32 @@ export default function ProductDetailPage() {
   const { productId } = useParams();
   const navigate = useNavigate();
 
-  // Mock product data (normally fetched via API)
-  const products = [
-    {
-      id: "1",
-      name: "Classic Cotton Shorts",
-      price: 3200,
-      prevPrice: 4000,
-      quantity: 5,
-      images: [
-        "https://images.unsplash.com/photo-1600180758890-6d8301c3617d?w=400",
-        "https://images.unsplash.com/photo-1520975916090-3105956dac38?w=400",
-        "https://images.unsplash.com/photo-1618354691324-6f3e1a9b29b2?w=400",
-        "https://images.unsplash.com/photo-1629425733761-f7f4a7bb0d52?w=400",
-      ],
-      description: "High quality cotton shorts perfect for summer.",
-      sizes: ["S", "M", "L", "XL"],
-    },
-    // Add other products similarly
-  ];
-
-  const product = products.find((p) => p.id === productId);
-
-  const [selectedImage, setSelectedImage] = useState(product.images[0]);
+  const [product, setProduct] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const data = await getProduct(productId);
+
+        const images =
+          data.productImage && data.productImage.length > 0
+            ? data.productImage.map((img) => `${API_BASE_URL}${img.imagePath}`)
+            : ["https://via.placeholder.com/400"];
+
+        setProduct({ ...data, images });
+        setSelectedImage(images[0]);
+      } catch (error) {
+        console.error("Error fetching product:", error);
+      }
+    };
+
+    fetchProduct();
+  }, [productId]);
+
   if (!product) {
-    return <Typography>Product not found.</Typography>;
+    return <Typography sx={{ mt: 5 }}>Loading product...</Typography>;
   }
 
   return (
@@ -50,7 +50,7 @@ export default function ProductDetailPage() {
       <Typography
         variant="subtitle2"
         sx={{ mb: 2, cursor: "pointer", color: "primary.main" }}
-        onClick={() => navigate(-1)}
+        onClick={() => navigate(`/product/${product.productId}`)}
       >
         &lt; Back
       </Typography>
@@ -63,7 +63,7 @@ export default function ProductDetailPage() {
               component="img"
               height="400"
               image={selectedImage}
-              alt={product.name}
+              alt={product.productName}
               sx={{ objectFit: "cover" }}
             />
 
@@ -81,7 +81,8 @@ export default function ProductDetailPage() {
                     height: 70,
                     borderRadius: 1,
                     cursor: "pointer",
-                    border: selectedImage === img ? "2px solid #aa9d75" : "1px solid #ccc",
+                    border:
+                      selectedImage === img ? "2px solid #aa9d75" : "1px solid #ccc",
                     objectFit: "cover",
                     "&:hover": { opacity: 0.8 },
                   }}
@@ -89,7 +90,7 @@ export default function ProductDetailPage() {
               ))}
             </Box>
 
-            {product.quantity === 0 && (
+            {product.stockQuantity === "0" && (
               <Chip
                 label="Sold Out"
                 color="error"
@@ -110,21 +111,19 @@ export default function ProductDetailPage() {
         {/* Right: Product Info */}
         <Grid item xs={12} md={6}>
           <Typography variant="h4" fontWeight={600} sx={{ mb: 1 }}>
-            {product.name}
+            {product.productName}
           </Typography>
 
           <Box sx={{ display: "flex", gap: 2, mb: 2, alignItems: "center" }}>
-            {product.prevPrice && (
+            {product.oldPrice && (
               <Typography sx={{ textDecoration: "line-through", color: "#888" }}>
-                Rs. {product.prevPrice.toLocaleString()}
+                Rs. {product.oldPrice.toLocaleString()}
               </Typography>
             )}
-            <Typography variant="h5" color="primary.main" fontWeight={700}>
-              Rs. {product.price.toLocaleString()}
+            <Typography variant="h5" color="text.primary" fontWeight={700}>
+              Rs. {product.newPrice.toLocaleString()}
             </Typography>
           </Box>
-
-          <Typography sx={{ mb: 3 }}>{product.description}</Typography>
 
           {/* Sizes */}
           <Box sx={{ mb: 3 }}>
@@ -132,16 +131,17 @@ export default function ProductDetailPage() {
               Select Size
             </Typography>
             <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              {product.sizes.map((size) => (
+              {product.size ? (
                 <Button
-                  key={size}
-                  variant={selectedSize === size ? "contained" : "outlined"}
-                  onClick={() => setSelectedSize(size)}
+                  variant={selectedSize === product.size ? "contained" : "outlined"}
+                  onClick={() => setSelectedSize(product.size)}
                   sx={{ minWidth: 50 }}
                 >
-                  {size}
+                  {product.size}
                 </Button>
-              ))}
+              ) : (
+                <Typography>No sizes available</Typography>
+              )}
             </Box>
           </Box>
 
@@ -149,10 +149,10 @@ export default function ProductDetailPage() {
           <Button
             variant="contained"
             color="primary"
-            disabled={product.quantity === 0}
+            disabled={product.stockQuantity === "0"}
             sx={{ py: 1.5, px: 5, fontWeight: 600 }}
           >
-            {product.quantity === 0 ? "Sold Out" : "Add to Cart"}
+            {product.stockQuantity === "0" ? "Sold Out" : "Add to Cart"}
           </Button>
         </Grid>
       </Grid>

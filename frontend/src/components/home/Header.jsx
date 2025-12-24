@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect,useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -35,6 +35,8 @@ import InstagramIconImg from "../../assets/social_media/instagram.png";
 import WhatsappIconImg from "../../assets/social_media/whatsapp.png";
 import TiktokIconImg from "../../assets/social_media/tiktok.png";
 
+import { getProducts } from "../../api/productApi";
+
 export default function Header({ categories }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [activeMenu, setActiveMenu] = useState(null);
@@ -42,30 +44,25 @@ export default function Header({ categories }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [openIndex, setOpenIndex] = useState(null);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
-  // Mock products for search results
-  const products = [
-    {
-      id: 1,
-      name: "Elegant Men’s Shirt",
-      price: "Rs. 3,200",
-      image: "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400",
-    },
-    {
-      id: 2,
-      name: "Artsy Women’s Dress",
-      price: "Rs. 4,500",
-      image: "https://images.unsplash.com/photo-1542060748-10c28b62716e?w=400",
-    },
-    {
-      id: 3,
-      name: "Unisex Hoodie",
-      price: "Rs. 5,000",
-      image: "https://images.unsplash.com/photo-1593032465171-8b1c4b8b86f2?w=400",
-    },
-  ];
+  useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      const response = await getProducts();
+      setProducts(response);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setLoading(false);
+    }
+  };
+
+    fetchProducts();
+  }, []);
 
   // Handlers
   const handleToggle = (index) => setOpenIndex(openIndex === index ? null : index);
@@ -89,12 +86,12 @@ export default function Header({ categories }) {
   };
 
   const filteredProducts = products.filter((p) =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase())
+    p.productName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
     // ✅ Navigate to category/subcategory
   const handleCategoryClick = (main, sub) => {
-    const path = `/${main.toLowerCase()}/${sub.toLowerCase()}`;
+    const path = `/${main.toLowerCase()}/collection/${sub.id}`;
     navigate(path);
     handleMenuClose();
     setDrawerOpen(false);
@@ -146,10 +143,10 @@ export default function Header({ categories }) {
                   >
                     {cat.subcategories.map((sub) => (
                       <MenuItem
-                        key={sub}
+                        key={sub.id}
                         onClick={() => handleCategoryClick(cat.name, sub)}
                       >
-                        {sub}
+                        {sub.name}
                       </MenuItem>
                     ))}
                   </Menu>
@@ -162,7 +159,7 @@ export default function Header({ categories }) {
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             {/* Social Media (hidden on mobile) */}
             <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.facebook.com/profile.php?id=61583263724276" target="_blank" rel="noopener noreferrer">
                 <img src={FacebookIconImg} alt="Facebook" style={{ width: 24, height: 24 }} />
               </a>
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
@@ -237,11 +234,11 @@ export default function Header({ categories }) {
                     <List component="div" disablePadding>
                       {cat.subcategories.map((sub) => (
                         <ListItemButton
-                          key={sub}
+                          key={sub.id}
                           sx={{ pl: 4 }}
                           onClick={() => handleCategoryClick(cat.name, sub)}
                         >
-                          <ListItemText primary={sub} />
+                          <ListItemText primary={sub.name} />
                         </ListItemButton>
                       ))}
                     </List>
@@ -312,7 +309,7 @@ export default function Header({ categories }) {
                 {filteredProducts.length > 0 ? (
                   <Grid container spacing={2}>
                     {filteredProducts.map((item) => (
-                      <Grid item xs={12} sm={6} key={item.id}>
+                      <Grid item xs={12} sm={6} key={item.productId}>
                         <Box
                           sx={{
                             display: "flex",
@@ -325,8 +322,8 @@ export default function Header({ categories }) {
                           }}
                         >
                           <img
-                            src={item.image}
-                            alt={item.name}
+                            src={`http://localhost:5276${item.productImage[0]?.imagePath}`}
+                            alt={item.productName}
                             style={{
                               width: 70,
                               height: 70,
@@ -335,7 +332,7 @@ export default function Header({ categories }) {
                             }}
                           />
                           <Box>
-                            <Typography sx={{ fontWeight: 600 }}>{item.name}</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>{item.productName}</Typography>
                             <Typography sx={{ color: "#aa9d7b", fontWeight: 500 }}>
                               {item.price}
                             </Typography>

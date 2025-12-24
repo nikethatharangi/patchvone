@@ -78,7 +78,7 @@ const Footer = () => {
               variant="body2"
               sx={{ fontFamily: "Montserrat, sans-serif" }}
             >
-              +94 11 222 3344
+              +94 70 700 9208
             </Typography>
           </Box>
 
@@ -101,7 +101,7 @@ const Footer = () => {
 
         {/* Right Section — Social Media */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2,justifyContent: "flex-end" }}>
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.facebook.com/profile.php?id=61583263724276" target="_blank" rel="noopener noreferrer">
             <img src={FacebookIcon} alt="Facebook" style={{ width: 28, height: 28 }} />
           </a>
           <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">

@@ -1,21 +1,35 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Stack, Alert } from "@mui/material";
+import { subscribeNewsletter } from "../../api/newsLetterApi";
+ 
 
 const NewsletterSection = () => {
   const [email, setEmail] = useState("");
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (email.trim() === "") return;
+      setLoading(true);
+      setError("");
 
-    // Simulate subscription success
-    setSuccess(true);
-    setEmail("");
+      try {
+        const response = await subscribeNewsletter(email);
 
-    // Hide success message after 3 seconds
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3000);
+        if (response.status === 201) {
+          setSuccess(true);
+          setEmail("");
+
+          setTimeout(() => setSuccess(false), 3000);
+        }
+      } catch (err) {
+        setError(
+          err.response?.data || "Subscription failed. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
   };
 
   return (

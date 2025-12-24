@@ -24,14 +24,18 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
-            return await _context.Products.ToListAsync();
+            return await _context.Products
+                .Include(p => p.ProductImage)
+                .ToListAsync();
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products
+        .Include(p => p.ProductImage)
+        .FirstOrDefaultAsync(p => p.ProductId == id);
 
             if (product == null)
             {
@@ -39,6 +43,19 @@ namespace backend.Controllers
             }
 
             return product;
+        }
+
+        // GET: api/Products/collection/{collectionId}
+        [HttpGet("collection/{collectionId}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCollectionId(int collectionId)
+        {
+            var products = await _context.Products
+                .Include(p => p.ProductCollection)
+                .Include(p => p.ProductImage) 
+                .Where(p => p.CollectionId == collectionId)
+                .ToListAsync();
+
+            return products;
         }
 
         // PUT: api/Products/5
