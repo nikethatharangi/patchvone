@@ -17,5 +17,6 @@ namespace backend.Models
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<Courier> Couriers { get; set; }
         public DbSet<ProductCollection> ProductCollections { get; set; }
+        public DbSet<Size> Sizes { get; set; }
     }
 }

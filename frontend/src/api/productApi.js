@@ -20,4 +20,9 @@ export const getProduct = async (id) => {
   const response = await api.get(`/api/Products/${id}`);
   return response.data;
 };
+
+export const getProductsByCategory = async (category) => {
+  const response = await api.get(`/api/Products/category/${category}`);
+  return response.data;
+}
   

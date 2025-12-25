@@ -162,13 +162,13 @@ export default function Header({ categories }) {
               <a href="https://www.facebook.com/profile.php?id=61583263724276" target="_blank" rel="noopener noreferrer">
                 <img src={FacebookIconImg} alt="Facebook" style={{ width: 24, height: 24 }} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.instagram.com/patchvone?igsh=MXRzMnU5NWt1c3U5bA==" target="_blank" rel="noopener noreferrer">
                 <img src={InstagramIconImg} alt="Instagram" style={{ width: 24, height: 24 }} />
               </a>
-              <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://api.whatsapp.com/send?phone=94707009208" target="_blank" rel="noopener noreferrer">
                 <img src={WhatsappIconImg} alt="WhatsApp" style={{ width: 24, height: 24 }} />
               </a>
-              <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.tiktok.com/@patchvone?_r=1&_t=ZS-92UhbCVyU5I" target="_blank" rel="noopener noreferrer">
                 <img src={TiktokIconImg} alt="Tiktok" style={{ width: 24, height: 24 }} />
               </a>
             </Box>

@@ -25,6 +25,7 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
         {
             return await _context.Products
+                .Where(p => !p.isDeleted)
                 .Include(p => p.ProductImage)
                 .ToListAsync();
         }
@@ -34,8 +35,9 @@ namespace backend.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var product = await _context.Products
-        .Include(p => p.ProductImage)
-        .FirstOrDefaultAsync(p => p.ProductId == id);
+                .Where(p => !p.isDeleted)
+                .Include(p => p.ProductImage)
+                .FirstOrDefaultAsync(p => p.ProductId == id);
 
             if (product == null)
             {
@@ -50,12 +52,27 @@ namespace backend.Controllers
         public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCollectionId(int collectionId)
         {
             var products = await _context.Products
+                .Where(p => !p.isDeleted)
                 .Include(p => p.ProductCollection)
-                .Include(p => p.ProductImage) 
+                .Include(p => p.ProductImage)
                 .Where(p => p.CollectionId == collectionId)
                 .ToListAsync();
 
             return products;
+        }
+
+        // GET: api/Products/category/{category}
+        [HttpGet("category/{category}")]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsByCategory(string category)
+        {
+            var products = await _context.Products
+            .Where(p => p.Category == category)
+            .OrderByDescending(p => p.CreatedDate)
+            .Take(4)
+            .Include(p => p.ProductImage)
+            .ToListAsync();
+
+            return Ok(products);
         }
 
         // PUT: api/Products/5

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getProduct } from "../../api/productApi";
 import { API_BASE_URL } from "../../api/productApi";
+import { getSizesByProductCode } from "../../api/sizeApi";
 import {
   Box,
   Typography,
@@ -19,6 +20,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
+  const [sizes, setSizes] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -32,6 +34,9 @@ export default function ProductDetailPage() {
 
         setProduct({ ...data, images });
         setSelectedImage(images[0]);
+
+        const sizesData = await getSizesByProductCode(data.productCode);
+        setSizes(sizesData || []);
       } catch (error) {
         console.error("Error fetching product:", error);
       }
@@ -125,20 +130,26 @@ export default function ProductDetailPage() {
             </Typography>
           </Box>
 
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            Color: {product.color || 'N/A'}
+          </Typography>
+
           {/* Sizes */}
           <Box sx={{ mb: 3 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               Select Size
             </Typography>
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              {product.size ? (
-                <Button
-                  variant={selectedSize === product.size ? "contained" : "outlined"}
-                  onClick={() => setSelectedSize(product.size)}
-                  sx={{ minWidth: 50 }}
-                >
-                  {product.size}
-                </Button>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap"}}>
+              {sizes.length > 0 ? (
+                sizes.map((s, index) => (
+                  <Button
+                    key={index}
+                    variant="contained"
+                    sx={{ minWidth: 50, backgroundColor: "#111B1E", color: "#fff" }}
+                  >
+                    {s.sizeValue} ({s.stockQuantity})
+                  </Button>
+                ))
               ) : (
                 <Typography>No sizes available</Typography>
               )}
