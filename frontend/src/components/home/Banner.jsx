@@ -61,7 +61,17 @@ export default function Banner() {
         }}>
           {bannerText}
         </Typography>
-        <Typography>Shop the latest trends now</Typography>
+        <Typography
+         sx={{ cursor: "pointer" }}
+         onClick={() => {
+          const section = document.getElementById("best-trending");
+              if (section) {
+              section.scrollIntoView({ behavior: "smooth" });
+              }
+         }}
+         >
+          Shop the latest trends now
+        </Typography>
       </Box>
     </Box>
   );

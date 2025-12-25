@@ -44,26 +44,40 @@
                     </div>
                 </div>                
            </div>
+           <div class="row">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="Color" class="control-label">Color</label>
+                    <input asp-for="Color" class="form-control" placeholder="e.g. Black, White, Navy" />
+                    <span asp-validation-for="Color" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
             <div class="row">
                 <div class="col">
-                    <div class="form-group">
-                        <label asp-for="Size" class="control-label">Size</label>
-                        <select id="DropdownSize" asp-for="Size" class="form-control">
-                            <option value="">-- Select --</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                        </select>
-                        <span asp-validation-for="Size" class="text-danger"></span>
+                    <div id="size-container">
+                        <div class="row mb-2 size-row">
+                            <div class="col">
+                                <label class="control-label">Sizes</label>
+                                <select name="SizeValues" class="form-control">
+                                    <option value="">-- Select Size --</option>
+                                    <option value="S">S</option>
+                                    <option value="M">M</option>
+                                    <option value="L">L</option>
+                                    <option value="XL">XL</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label class="control-label">Stock Quantity</label>
+                                <input type="number" name="StockQuantities" class="form-control" placeholder="Stock Quantity" min="0" />
+                            </div>
+                            <div class="col d-flex align-items-end">
+                                <button type="button" class="btn btn-danger remove-size ">Remove</button>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label asp-for="StockQuantity" class="control-label">Stock Quantity</label>
-                        <input type="number" asp-for="StockQuantity" class="form-control" />
-                        <span asp-validation-for="StockQuantity" class="text-danger"></span>
-                    </div>
+
+                    <button type="button" id="add-size" class="btn btn-secondary mb-3">Add Size</button>
                 </div>
             </div>
             <div class="row">
@@ -181,4 +195,25 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // Add new size row
+        document.getElementById('add-size').addEventListener('click', function () {
+            var container = document.getElementById('size-container');
+            var firstRow = container.querySelector('.size-row');
+            var newRow = firstRow.cloneNode(true);
+            newRow.querySelectorAll('select, input').forEach(el => el.value = '');
+            container.appendChild(newRow);
+        });
+
+        // Remove size row
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('remove-size')) {
+                var rows = document.querySelectorAll('#size-container .size-row');
+                if (rows.length > 1) {
+                    e.target.closest('.size-row').remove();
+                }
+            }
+        });
+    </script>
 }

@@ -94,7 +94,7 @@ const Footer = () => {
                 fontSize: "0.875rem",
               }}
             >
-              hellopatchv@gmail.com
+              hellopatchvone@gmail.com
             </Link>
           </Box>
         </Box>
@@ -104,13 +104,13 @@ const Footer = () => {
           <a href="https://www.facebook.com/profile.php?id=61583263724276" target="_blank" rel="noopener noreferrer">
             <img src={FacebookIcon} alt="Facebook" style={{ width: 28, height: 28 }} />
           </a>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.instagram.com/patchvone?igsh=MXRzMnU5NWt1c3U5bA==" target="_blank" rel="noopener noreferrer">
             <img src={InstagramIcon} alt="Instagram" style={{ width: 28, height: 28 }} />
           </a>
-          <a href="https://wa.me/94712345678" target="_blank" rel="noopener noreferrer">
+          <a href="https://api.whatsapp.com/send?phone=94707009208" target="_blank" rel="noopener noreferrer">
             <img src={WhatsappIcon} alt="WhatsApp" style={{ width: 28, height: 28 }} />
           </a>
-          <a href="https://wa.me/94712345678" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.tiktok.com/@patchvone?_r=1&_t=ZS-92UhbCVyU5I" target="_blank" rel="noopener noreferrer">
             <img src={TiktokIcon} alt="Tiktok" style={{ width: 28, height: 28 }} />
           </a>
         </Box>

@@ -11,10 +11,9 @@ namespace backend.Models
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
         public string ProductType { get; set; } //shirt,bottle,skirt
-        public string Size { get; set; }
-        public string StockQuantity { get; set; }
-        public float OldPrice { get; set; }
+        public float? OldPrice { get; set; }
         public float NewPrice { get; set; }
+        public string Color { get; set; }
         public string Category { get; set; } //women,men,unisex,Accesories
         public string CreatedUser { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -28,5 +27,10 @@ namespace backend.Models
         public ICollection<ProductImage> ProductImage { get; set; }
         public ICollection<Cart> Cart { get; set; }
         public ICollection<OrderDetails> OrderDetails { get; set; }
+
+        public bool isDeleted { get; set; } = false;
+
+        [NotMapped]
+        public ICollection<Size> Sizes { get; set; }
     }
 }

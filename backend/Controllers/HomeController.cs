@@ -15,13 +15,50 @@ namespace backend.Controllers
             _dbcontext = dbcontext;
         }
 
-        public IActionResult Index()
+    /*    public IActionResult Index()
         {
             ViewBag.Banners = _dbcontext.Banners.OrderByDescending(b => b.BannerId).Take(1).ToList();
             ViewBag.ProductList = _dbcontext.Products.ToList();
             ViewBag.CollectionList = _dbcontext.ProductCollections.ToList();
             return View();
+        }*/
+
+        public IActionResult Index()
+        {
+                // Load the latest banner
+            ViewBag.Banners = _dbcontext.Banners
+                                .OrderByDescending(b => b.BannerId)
+                                .Take(1)
+                                .ToList();
+
+            // Load products
+            var allProducts = _dbcontext.Products
+                                .Include(p => p.ProductCollection)
+                                .Include(p => p.ProductImage)
+                                .ToList();
+
+            // Remove duplicates based on ProductCode
+            var distinctProducts = allProducts
+                                .GroupBy(p => p.ProductCode)
+                                .Select(g => g.First())
+                                .ToList();
+
+            // Attach sizes for each product
+            foreach (var product in distinctProducts)
+            {
+                product.Sizes = _dbcontext.Sizes
+                                    .Where(s => s.ProductCode == product.ProductCode)
+                                    .ToList();
+            }
+
+            ViewBag.ProductList = distinctProducts;
+
+            // Load product collections
+            ViewBag.CollectionList = _dbcontext.ProductCollections.ToList();
+
+            return View();
         }
+
 
         [HttpGet]
         public IActionResult ProductCollectionView()
@@ -55,7 +92,7 @@ namespace backend.Controllers
         }
 
         [HttpPost]
-        public IActionResult ProductView(Product product, List<IFormFile> ImageFiles)
+        public IActionResult ProductView(Product product, List<IFormFile> ImageFiles , List<string> SizeValues, List<string> StockQuantities)
         {
             if (product.CollectionId == 0)
             {
@@ -71,6 +108,23 @@ namespace backend.Controllers
             _dbcontext.SaveChanges();
 
             int productId = product.ProductId;
+
+            if (SizeValues != null && StockQuantities != null)
+            {
+                for (int i = 0; i < SizeValues.Count; i++)
+                {
+                    Size size = new Size
+                    {
+                        ProductCode = product.ProductCode,
+                        SizeValue = SizeValues[i],
+                        StockQuantity = StockQuantities[i]
+                    };
+
+                    _dbcontext.Sizes.Add(size);
+                }
+
+                _dbcontext.SaveChanges();
+            }
 
             string folder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "ProductImages");
             if (!Directory.Exists(folder))
@@ -151,6 +205,74 @@ namespace backend.Controllers
             return View();
         }
         
+
+        [HttpPost]
+        public IActionResult EditProduct(Product product, List<string> SizeValues, List<string> StockQuantities)
+        {
+            var existing = _dbcontext.Products.Find(product.ProductId);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+            existing.ProductCode = product.ProductCode;
+            existing.ProductName = product.ProductName;
+            existing.ProductType = product.ProductType;
+            existing.OldPrice = product.OldPrice;
+            existing.NewPrice = product.NewPrice;
+            existing.Color = product.Color;
+            existing.Category = product.Category;
+            existing.CollectionId = product.CollectionId;
+            _dbcontext.SaveChanges();
+
+            // Update sizes
+            var existingSizes = _dbcontext.Sizes.Where(s => s.ProductCode == existing.ProductCode).ToList();
+            _dbcontext.Sizes.RemoveRange(existingSizes);
+            if (SizeValues != null && StockQuantities != null)
+            {
+                for (int i = 0; i < SizeValues.Count; i++)
+                {
+                    if (!string.IsNullOrEmpty(SizeValues[i]))
+                    {
+                        Size size = new Size
+                        {
+                            ProductCode = existing.ProductCode,
+                            SizeValue = SizeValues[i],
+                            StockQuantity = StockQuantities[i]
+                        };
+                        _dbcontext.Sizes.Add(size);
+                    }
+                }
+            }
+            _dbcontext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult DeleteProduct(int id)
+        {
+            var product = _dbcontext.Products.Find(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            product.isDeleted = true;
+            _dbcontext.SaveChanges();
+
+            // Remove images
+            var images = _dbcontext.ProductsImage.Where(pi => pi.ProductId == id).ToList();
+            foreach (var img in images)
+            {
+                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", img.ImagePath.TrimStart('/'));
+                if (System.IO.File.Exists(filePath))
+                {
+                    System.IO.File.Delete(filePath);
+                }
+                _dbcontext.ProductsImage.Remove(img);
+            }
+            _dbcontext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
 
         [HttpGet]
         public IActionResult CurrierView()

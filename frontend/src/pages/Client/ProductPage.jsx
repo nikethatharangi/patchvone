@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../../components/home/Footer";
 import { getProducts, getProductsByCollectionId } from "../../api/productApi";
 import { API_BASE_URL } from "../../api/productApi";
+import { getSizesByProductCode } from "../../api/sizeApi";
 
 import {
   Box,
@@ -31,48 +32,61 @@ export default function ProductPage() {
   const [sizeFilter, setSizeFilter] = useState("all");
   const [selectedImages, setSelectedImages] = useState({});
 
-useEffect(() => {
-  const loadProducts = async () => {
-    try {
-      let data;
-      const id = parseInt(collectionId);
+    useEffect(() => {
+    const loadProducts = async () => {
+        try {
+        let rowData;
+        let data;
+        const id = parseInt(collectionId);
 
-      if (!isNaN(id)) {
-        data = await getProductsByCollectionId(id);
-      } else {
-        data = await getProducts();
-      }
+        if (!isNaN(id)) {
+            data = await getProductsByCollectionId(id);
+        } else {
+            data = await getProducts();
+        }
+        rowData = data.filter(
+        (product, index, self) =>
+            index === self.findIndex(p => p.productCode === product.productCode)
+        );
 
-      const transformed = data.map(product => ({
-        id: product.productId,
-        name: product.productName,
-        price: product.newPrice || 0,
-        oldPrice: product.oldPrice || 0,
-        discount:
-          product.oldPrice && product.oldPrice > product.newPrice
-            ? `${Math.round(
-                (1 - product.newPrice / product.oldPrice) * 100
-              )}% OFF`
-            : null,
-        quantity: Number(product.stockQuantity) || 0,
-        size: product.size || "",
-        category: product.category || "",
-        subcategory: product.productCollection?.collectionName || "",
-        images:
-          product.productImage && product.productImage.length > 0
-            ? product.productImage.map(img => `${API_BASE_URL}${img.imagePath}`)
-            : ["https://via.placeholder.com/400"], // fallback image
-      }));
+        // For each product, fetch sizes
+        const transformed = await Promise.all(
+            rowData.map(async product => {
+            const sizesResponse = await getSizesByProductCode(product.productCode);
+            const sizes = sizesResponse || [];
+            const sizeValues = sizes.map(s => s.sizeValue);
+            const totalStock = sizes.reduce((acc, s) => acc + Number(s.stockQuantity), 0);
 
-      setProducts(transformed);
-      console.log("Mapped products:", transformed);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    }
-  };
+            return {
+                id: product.productId,
+                name: product.productName,
+                price: product.newPrice || 0,
+                oldPrice: product.oldPrice || 0,
+                discount:
+                product.oldPrice && product.oldPrice > product.newPrice
+                    ? `${Math.round((1 - product.newPrice / product.oldPrice) * 100)}% OFF`
+                    : null,
+                quantity: totalStock,
+                size: sizeValues,
+                category: product.category || "",
+                subcategory: product.productCollection?.collectionName || "",
+                images:
+                product.productImage && product.productImage.length > 0
+                    ? product.productImage.map(img => `${API_BASE_URL}${img.imagePath}`)
+                    : ["https://via.placeholder.com/400"],
+            };
+            })
+        );
 
-  loadProducts();
-}, [collectionId]);
+        setProducts(transformed);
+        console.log("Mapped products:", transformed);
+        } catch (error) {
+        console.error("Error fetching products:", error);
+        }
+    };
+
+    loadProducts();
+    }, [collectionId]);
 
   // Filter products by category
   let filteredByCategory = products; // Remove category filter for now
@@ -81,10 +95,10 @@ useEffect(() => {
   // Apply filters
   const filteredProducts = filteredByCategory.filter((p) => {
     if (availability === "in-stock" && p.quantity === 0) return false;
-    if (sizeFilter !== "all" && p.size !== sizeFilter) return false;
+    if (sizeFilter !== "all" && !p.size.includes(sizeFilter)) return false;
     if (p.price < priceRange[0] || p.price > priceRange[1]) return false;
     return true;
-  });
+  }); 
 
   const formattedMainCategory =
   mainCategory
