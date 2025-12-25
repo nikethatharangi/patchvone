@@ -28,7 +28,7 @@ export default function ProductPage() {
   const collectionName = products?.[0]?.subcategory || "";
   console.log('Collection Name:', collectionName);
   const [availability, setAvailability] = useState("all");
-  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
   const [sizeFilter, setSizeFilter] = useState("all");
   const [selectedImages, setSelectedImages] = useState({});
 
@@ -182,7 +182,7 @@ export default function ProductPage() {
                     L
                 </ToggleButton>
                             <ToggleButton
-                    value="L"
+                    value="XL"
                     sx={{ "&.Mui-selected": { bgcolor: "#aa9d75", color: "#FFFCF5" } }}
                 >
                     XL

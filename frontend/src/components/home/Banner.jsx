@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { getBanners } from "../../api/bannerApi";
 
-const BASE_URL = "http://localhost:5276";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 let bannerText = '';
 
 export default function Banner() {
