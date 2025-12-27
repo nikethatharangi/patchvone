@@ -31,6 +31,13 @@ export default function Banner() {
     loadBanner();
   }, []);
 
+  const scrollToTrending = () => {
+  const section = document.getElementById("best-trending");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -64,12 +71,7 @@ export default function Banner() {
         </Typography>
         <Typography
          sx={{ cursor: "pointer" }}
-         onClick={() => {
-          const section = document.getElementById("best-trending");
-              if (section) {
-              section.scrollIntoView({ behavior: "smooth" });
-              }
-         }}
+         onClick={() => { scrollToTrending(); }}
          >
           Shop the latest trends now
         </Typography>

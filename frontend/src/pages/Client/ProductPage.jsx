@@ -22,11 +22,8 @@ export default function ProductPage() {
   const { mainCategory = '', collection = '', collectionId = ''} = useParams();
   const navigate = useNavigate();
 
-  console.log('Params:', mainCategory, collection, collectionId);
-
   const [products, setProducts] = useState([]);
   const collectionName = products?.[0]?.subcategory || "";
-  console.log('Collection Name:', collectionName);
   const [availability, setAvailability] = useState("all");
   const [priceRange, setPriceRange] = useState([0, 5000]);
   const [sizeFilter, setSizeFilter] = useState("all");
@@ -61,7 +58,7 @@ export default function ProductPage() {
                 id: product.productId,
                 name: product.productName,
                 price: product.newPrice || 0,
-                oldPrice: product.oldPrice || 0,
+                oldPrice: product.oldPrice,
                 discount:
                 product.oldPrice && product.oldPrice > product.newPrice
                     ? `${Math.round((1 - product.newPrice / product.oldPrice) * 100)}% OFF`
