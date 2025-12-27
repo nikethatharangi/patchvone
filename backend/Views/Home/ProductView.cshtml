@@ -114,7 +114,7 @@
                     <div class="form-group">
                         <label asp-for="CollectionId" class="control-label">Collection</label>
                         <select asp-for="CollectionId"
-                                asp-items="@(new SelectList(ViewBag.Collections, "CollectionId", "CollectionName"))"
+                                id="CollectionDropdown"
                                 class="form-control">
                             <option value="">-- Select Collection --</option>
                         </select>
@@ -146,6 +146,13 @@
                     <div class="form-group">
                         <label>Image 4</label>
                         <input type="file" name="ImageFiles" class="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <small class="form-text text-muted">
+                            Preferred image size: <strong>1024 × 1536</strong>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -214,6 +221,40 @@
                     e.target.closest('.size-row').remove();
                 }
             }
+        });
+
+            $('#DropdownCategory').on('change', function () {
+            var category = $(this).val();
+
+            var $collectionDropdown = $('#CollectionDropdown');
+            $collectionDropdown.empty();
+            $collectionDropdown.append('<option value="">-- Select Collection --</option>');
+
+            if (category === "0" || category === "") {
+                return;
+            }
+
+            $.ajax({
+                url: '/Home/GetCollectionsByCategory',
+                type: 'GET',
+                data: { category: category },
+                success: function (data) {
+                    if (data.length === 0) {
+                        $collectionDropdown.append('<option value="">No collections found</option>');
+                    } else {
+                        $.each(data, function (i, item) {
+                            $collectionDropdown.append(
+                                `<option value="${item.collectionId}">
+                                    ${item.collectionName}
+                                </option>`
+                            );
+                        });
+                    }
+                },
+                error: function () {
+                    alert('Failed to load collections');
+                }
+            });
         });
     </script>
 }

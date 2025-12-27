@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { getBanners } from "../../api/bannerApi";
 
-const BASE_URL = "http://localhost:5276";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 let bannerText = '';
 
 export default function Banner() {
@@ -29,6 +30,13 @@ export default function Banner() {
 
     loadBanner();
   }, []);
+
+  const scrollToTrending = () => {
+  const section = document.getElementById("best-trending");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <Box
@@ -63,12 +71,7 @@ export default function Banner() {
         </Typography>
         <Typography
          sx={{ cursor: "pointer" }}
-         onClick={() => {
-          const section = document.getElementById("best-trending");
-              if (section) {
-              section.scrollIntoView({ behavior: "smooth" });
-              }
-         }}
+         onClick={() => { scrollToTrending(); }}
          >
           Shop the latest trends now
         </Typography>

@@ -311,6 +311,10 @@ export default function Header({ categories }) {
                     {filteredProducts.map((item) => (
                       <Grid item xs={12} sm={6} key={item.productId}>
                         <Box
+                          onClick={() => {
+                            navigate(`/products/${item.productId}`);
+                            handleSearchClose();
+                          }}
                           sx={{
                             display: "flex",
                             alignItems: "center",
@@ -318,11 +322,16 @@ export default function Header({ categories }) {
                             border: "1px solid #eee",
                             p: 1.5,
                             borderRadius: 2,
-                            "&:hover": { boxShadow: 2 },
+                            cursor: "pointer",
+                            transition: "0.2s",
+                            "&:hover": {
+                              boxShadow: 3,
+                              backgroundColor: "#fafafa",
+                            },
                           }}
                         >
                           <img
-                            src={`http://localhost:5276${item.productImage[0]?.imagePath}`}
+                            src={`http://localhost:5276${item.productImage?.[0]?.imagePath}`}
                             alt={item.productName}
                             style={{
                               width: 70,
@@ -331,10 +340,13 @@ export default function Header({ categories }) {
                               objectFit: "cover",
                             }}
                           />
+
                           <Box>
-                            <Typography sx={{ fontWeight: 600 }}>{item.productName}</Typography>
+                            <Typography sx={{ fontWeight: 600 }}>
+                              {item.productName}
+                            </Typography>
                             <Typography sx={{ color: "#aa9d7b", fontWeight: 500 }}>
-                              {item.price}
+                              Rs. {item.price}
                             </Typography>
                           </Box>
                         </Box>

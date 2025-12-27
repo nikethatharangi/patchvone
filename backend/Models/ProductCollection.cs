@@ -11,6 +11,7 @@ namespace backend.Models
         public string CollectionName { get; set; }
         public DateTime CreatedDate { get; set; }
         public string ColletionType { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public ICollection<Product> Product { get; set; }
     }
 }

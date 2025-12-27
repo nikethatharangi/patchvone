@@ -24,7 +24,10 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductCollection>>> GetProductCollections()
         {
-            return await _context.ProductCollections.ToListAsync();
+            var productCollection = await _context.ProductCollections
+            .Where(p => !p.IsDeleted)
+            .ToListAsync();
+            return productCollection;
         }
 
         // GET: api/ProductCollections/5

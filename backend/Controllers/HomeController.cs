@@ -1,7 +1,9 @@
-﻿using backend.Models;
+﻿using System.Collections.ObjectModel;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace backend.Controllers
 {
@@ -56,7 +58,7 @@ namespace backend.Controllers
             // Load product collections
             ViewBag.CollectionList = _dbcontext.ProductCollections.ToList();
 
-            return View();
+            return RedirectToAction("IndexPagination");
         }
 
 
@@ -292,6 +294,107 @@ namespace backend.Controllers
             ModelState.Clear();
 
             return View();
+        }
+
+        //Delete Collection
+        [HttpGet]
+        public async Task<IActionResult> DeleteCollection(int id)
+        {
+            var collection = await _dbcontext.ProductCollections
+                .FirstOrDefaultAsync(c => c.CollectionId == id);
+
+            if (collection == null)
+                return NotFound();
+
+            collection.IsDeleted = true;
+            await _dbcontext.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        //Edit Collection
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditCollection(ProductCollection model)
+        {
+            if (model.CollectionId <= 0)
+            {
+                return BadRequest();
+            }
+
+            var collection = _dbcontext.ProductCollections
+                .FirstOrDefault(c => c.CollectionId == model.CollectionId);
+
+            if (collection == null)
+            {
+                return NotFound();
+            }
+
+            collection.CollectionName = model.CollectionName;
+            _dbcontext.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public IActionResult GetCollectionsByCategory(string category)
+        {
+            var collections = _dbcontext.ProductCollections
+                .Where(c => c.ColletionType == category && !c.IsDeleted)
+                .Select(c => new
+                {
+                    c.CollectionId,
+                    c.CollectionName
+                })
+                .ToList();
+
+            return Json(collections);
+        }
+
+        public IActionResult IndexPagination(int productPage = 1, int collectionPage = 1)
+        {
+            int pageSize = 5;
+
+            ViewBag.Banners = _dbcontext.Banners
+                .OrderByDescending(b => b.BannerId)
+                .Take(1)
+                .ToList();
+
+            var totalCollections = _dbcontext.ProductCollections.Count();
+            var collections = _dbcontext.ProductCollections
+                .OrderByDescending(c => c.CollectionId)
+                .Skip((collectionPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            ViewBag.CollectionList = collections;
+            ViewBag.CollectionPage = collectionPage;
+            ViewBag.CollectionTotalPages = (int)Math.Ceiling(totalCollections / (double)pageSize);
+
+            var productsQuery = _dbcontext.Products
+                .Include(p => p.ProductCollection)
+                .Include(p => p.ProductImage)
+                .OrderByDescending(p => p.ProductId);
+
+            var totalProducts = productsQuery.Count();
+
+            var products = productsQuery
+                .Skip((productPage - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            foreach (var product in products)
+            {
+                product.Sizes = _dbcontext.Sizes
+                    .Where(s => s.ProductCode == product.ProductCode)
+                    .ToList();
+            }
+
+            ViewBag.ProductList = products;
+            ViewBag.ProductPage = productPage;
+            ViewBag.ProductTotalPages = (int)Math.Ceiling(totalProducts / (double)pageSize);
+
+            return View("Index");
         }
     }
 }
