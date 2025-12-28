@@ -5,6 +5,12 @@ using backend.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(
+        int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "5000"));
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews()
     .AddJsonOptions(options =>
@@ -40,21 +46,22 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-};
+};*/
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseCors("AllowReactDev");
 
+app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseAuthorization();
 
 app.MapStaticAssets();
 
